@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Movie Title -->
     <TextView
         android:id="@+id/movieTitle"
         android:layout_width="wrap_content"
@@ -14,7 +13,6 @@
         android:textStyle="bold"
         android:layout_marginBottom="8dp"/>
 
-    <!-- Movie Description -->
     <TextView
         android:id="@+id/movieDescription"
         android:layout_width="wrap_content"
@@ -22,7 +20,6 @@
         android:text="Movie Description"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Movie Poster Image -->
     <ImageView
         android:id="@+id/moviePoster"
         android:layout_width="match_parent"
@@ -31,7 +28,41 @@
         android:scaleType="centerCrop"
         android:contentDescription="Movie Poster" />
 
-    <!-- Loading Indicator -->
+    <TextView
+        android:id="@+id/movieGenres"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Genres"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/movieReleaseDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Release Date"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/movieVoteAverage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vote Average"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/movieRuntime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Runtime"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/movieCast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cast"
+        android:layout_marginBottom="16dp"/>
+
     <ProgressBar
         android:id="@+id/loadingIndicator"
         android:layout_width="wrap_content"

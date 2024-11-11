@@ -50,6 +50,18 @@ class MovieDetailFragment : Fragment() {
                             binding.movieTitle.text = movieDetails.title
                             binding.movieDescription.text = movieDetails.overview
 
+                            val genres = movieDetails.genres.joinToString(", ") { it.name }
+                            binding.movieGenres.text = "Genres: $genres"
+
+                            binding.movieReleaseDate.text = "Release Date: ${movieDetails.release_date}"
+
+                            binding.movieVoteAverage.text = "Vote Average: ${movieDetails.vote_average}"
+
+                            binding.movieRuntime.text = "Runtime: ${movieDetails.runtime} min"
+
+                            val cast = movieDetails.credits.cast.joinToString(", ") { "${it.name} as ${it.character}" }
+                            binding.movieCast.text = "Cast: $cast"
+
                             val imageUrl = "https://image.tmdb.org/t/p/w500${movieDetails.poster_path}"
                             Picasso.get().load(imageUrl).into(binding.moviePoster)
                         }
