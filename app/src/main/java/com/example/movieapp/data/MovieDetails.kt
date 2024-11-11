@@ -7,7 +7,8 @@ data class MovieDetails(
     val release_date: String,
     val vote_average: Double,
     val runtime: Int,
-    val credits: Credits
+    val credits: Credits,
+    val poster_path: String
 )
 
 data class Genre(val name: String)

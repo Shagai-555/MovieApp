@@ -42,7 +42,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        // Initialize the layout managers
         binding.nowPlayingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.upcomingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.topRatedRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -50,7 +49,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadMovies() {
-        // Load movies for each category
         fetchMovies("now_playing", binding.nowPlayingRecyclerView)
         fetchMovies("upcoming", binding.upcomingRecyclerView)
         fetchMovies("top_rated", binding.topRatedRecyclerView)
@@ -58,10 +56,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun fetchMovies(category: String, recyclerView: RecyclerView) {
-        // Use lifecycleScope for better coroutine management
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                // Get the response from the API
                 val response: Response<MovieResponse> = RetrofitInstance.api.getMoviesByCategory(category)
 
                 withContext(Dispatchers.Main) {

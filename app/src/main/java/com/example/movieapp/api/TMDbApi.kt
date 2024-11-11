@@ -28,4 +28,7 @@ interface TMDbApi {
         @Path("category") category: String,
         @Query("page") page: Int = 1
     ): Response<MovieResponse>
+
+    @GET("movie/upcoming")
+    suspend fun getUpcomingMovies(@Query("page") page: Int = 1): Response<MovieResponse>
 }
