@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MovieApp</string>
+    <string name="title_home">Home</string>
+    <string name="title_search">Search</string>
+    <string name="title_watchList">Watch List</string>
+    <string name="tmdb_api_key">eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDhhY2Q3YmEyN2QxZjJhNTFkYWJjYzI0N2QwMjNmMSIsIm5iZiI6MTczMTI0MTUxMS42MjkzODc2LCJzdWIiOiI2NzFjOTFjMDRiZTE1NDY5ZTcwZGQwNTMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.l3C7YVe0qBfyu_j7VvyNAWqR_x4O0_uA21pwqZtYch0</string>
+</resources>
