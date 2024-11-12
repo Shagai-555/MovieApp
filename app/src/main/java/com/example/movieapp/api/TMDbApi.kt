@@ -1,5 +1,6 @@
 package com.example.movieapp.api
 
+import com.example.movieapp.data.Credits
 import com.example.movieapp.data.MovieDetails
 import com.example.movieapp.data.MovieResponse
 import retrofit2.Response
@@ -22,6 +23,9 @@ interface TMDbApi {
 
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(@Path("movie_id") movieId: Int): Response<MovieDetails>
+
+    @GET("movie/{movie_id}/credits")
+    suspend fun getCredit(@Path("movie_id") movieId: Int): Response<Credits>
 
     @GET("movie/{category}")
     suspend fun getMoviesByCategory(

@@ -1,24 +1,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="10dp">
 
-    <EditText
-        android:id="@+id/searchEditText"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search Movies"
-        android:inputType="text"
-        android:importantForAccessibility="yes"
-        android:contentDescription="Search movies input field"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        card_view:cardCornerRadius="12dp"
+        card_view:cardElevation="6dp"
+        android:layout_gravity="center"
+        android:backgroundTint="#3A3F47">
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="Search Movies"
+            android:inputType="text"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Search movies input field"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#B0B0B0"
+            android:textSize="16sp"
+            android:background="@android:color/transparent"
+            android:layout_margin="8dp"
+            android:drawableEnd="@drawable/ic_search_black_24dp"
+        android:drawablePadding="8dp"
+        />
+    </androidx.cardview.widget.CardView>
 
     <ProgressBar
         android:id="@+id/loadingIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:indeterminateTint="@color/purple_500"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -26,6 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:paddingBottom="50dp"/>
 
 </LinearLayout>

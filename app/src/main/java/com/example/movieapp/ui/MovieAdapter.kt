@@ -26,7 +26,6 @@ class MovieAdapter(
 
     inner class MovieViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(movie: Movie) {
-            binding.movieTitle.text = movie.title
 
             val imageUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}"
             Picasso.get().load(imageUrl).into(binding.moviePoster)

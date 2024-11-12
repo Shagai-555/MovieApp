@@ -31,7 +31,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -49,32 +49,39 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadMovies() {
-        fetchMovies("now_playing", binding.nowPlayingRecyclerView)
-        fetchMovies("upcoming", binding.upcomingRecyclerView)
-        fetchMovies("top_rated", binding.topRatedRecyclerView)
-        fetchMovies("popular", binding.popularRecyclerView)
+        showLoadingIndicator(true) // Show loading indicator
+        viewLifecycleOwner.lifecycleScope.launch {
+            fetchMovies("now_playing", binding.nowPlayingRecyclerView)
+            fetchMovies("upcoming", binding.upcomingRecyclerView)
+            fetchMovies("top_rated", binding.topRatedRecyclerView)
+            fetchMovies("popular", binding.popularRecyclerView)
+            showLoadingIndicator(false) // Hide loading indicator
+        }
     }
 
-    private fun fetchMovies(category: String, recyclerView: RecyclerView) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val response: Response<MovieResponse> = RetrofitInstance.api.getMoviesByCategory(category)
+    private suspend fun fetchMovies(category: String, recyclerView: RecyclerView) {
+        try {
+            val response: Response<MovieResponse> = RetrofitInstance.api.getMoviesByCategory(category)
 
-                withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
-                        val movies: List<Movie> = response.body()?.results ?: emptyList()
-                        movieAdapter = MovieAdapter(movies) { movie -> onMovieClicked(movie) }
-                        recyclerView.adapter = movieAdapter
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to load movies", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    val movies: List<Movie> = response.body()?.results ?: emptyList()
+                    movieAdapter = MovieAdapter(movies) { movie -> onMovieClicked(movie) }
+                    recyclerView.adapter = movieAdapter
+                } else {
+                    Toast.makeText(requireContext(), "Failed to load $category movies", Toast.LENGTH_SHORT).show()
                 }
             }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun showLoadingIndicator(show: Boolean) {
+        binding.loadingIndicator.visibility = if (show) View.VISIBLE else View.GONE
+        binding.contentLayout.visibility = if (show) View.GONE else View.VISIBLE
     }
 
     private fun onMovieClicked(movie: Movie) {

@@ -1,14 +1,17 @@
 package com.example.movieapp.ui.detail
 
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.movieapp.CastAdapter
 import com.example.movieapp.api.RetrofitInstance
-import com.example.movieapp.data.MovieDetails
 import com.example.movieapp.databinding.FragmentMovieDetailBinding
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
@@ -33,37 +36,72 @@ class MovieDetailFragment : Fragment() {
             movieId = it.getInt("movie_id", 0)
         }
 
+        binding.loadingIndicator.visibility = View.VISIBLE
+        setupCastRecyclerView()
         loadMovieDetails()
 
         return root
+    }
+
+    private fun setupCastRecyclerView() {
+        binding.castRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.castRecyclerView.adapter = CastAdapter(emptyList())
     }
 
     private fun loadMovieDetails() {
         lifecycleScope.launch {
             try {
                 val response = RetrofitInstance.api.getMovieDetails(movieId)
+                val creditRes = RetrofitInstance.api.getCredit(movieId)
+
                 withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
+                    binding.loadingIndicator.visibility = View.GONE
+
+                    if (response.isSuccessful && creditRes.isSuccessful) {
                         val movieDetails = response.body()
+                        val credits = creditRes.body()
 
                         if (movieDetails != null) {
                             binding.movieTitle.text = movieDetails.title
                             binding.movieDescription.text = movieDetails.overview
 
-                            val genres = movieDetails.genres.joinToString(", ") { it.name }
-                            binding.movieGenres.text = "Genres: $genres"
+                            val genres = movieDetails.genres.joinToString(" | ") { it.name }
+                            binding.movieGenres.text = genres
 
-                            binding.movieReleaseDate.text = "Release Date: ${movieDetails.release_date}"
+                            binding.movieReleaseDate.text = Html.fromHtml(
+                                "Release Date: <b><i>${movieDetails.release_date}</i></b>",
+                                Html.FROM_HTML_MODE_LEGACY
+                            )
 
-                            binding.movieVoteAverage.text = "Vote Average: ${movieDetails.vote_average}"
+                            binding.movieVoteAverage.text = Html.fromHtml(
+                                "Vote Average: <b><i>${movieDetails.vote_average}⭐</i></b>",
+                                Html.FROM_HTML_MODE_LEGACY
+                            )
 
-                            binding.movieRuntime.text = "Runtime: ${movieDetails.runtime} min"
+                            binding.movieRuntime.text = Html.fromHtml(
+                                "Runtime: <b><i>${movieDetails.runtime}</i></b>",
+                                Html.FROM_HTML_MODE_LEGACY
+                            )
 
-                            val cast = movieDetails.credits.cast.joinToString(", ") { "${it.name} as ${it.character}" }
-                            binding.movieCast.text = "Cast: $cast"
+                            val productionCompanies = movieDetails.production_companies.joinToString(" | ") { it.name }
+                            binding.movieProductionCompanies.text = productionCompanies
+
+                            binding.movieRevenue.text = Html.fromHtml(
+                                "Revenue: <b><i>${movieDetails.revenue}</i></b>",
+                                Html.FROM_HTML_MODE_LEGACY
+                            )
+
+                            val backdropUrl = "https://image.tmdb.org/t/p/w500${movieDetails.backdrop_path}"
+                            Picasso.get().load(backdropUrl).into(binding.movieBackdrop)
 
                             val imageUrl = "https://image.tmdb.org/t/p/w500${movieDetails.poster_path}"
                             Picasso.get().load(imageUrl).into(binding.moviePoster)
+
+                            if (credits != null) {
+                                (binding.castRecyclerView.adapter as CastAdapter).updateCast(credits.cast)
+                            }
+                        } else {
+                            Toast.makeText(context, "Movie details not available", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         Toast.makeText(context, "Error fetching movie details", Toast.LENGTH_SHORT).show()
@@ -71,6 +109,7 @@ class MovieDetailFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    binding.loadingIndicator.visibility = View.GONE
                     Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }

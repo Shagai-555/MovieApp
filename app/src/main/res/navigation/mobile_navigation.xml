@@ -34,7 +34,7 @@
     <fragment
         android:id="@+id/navigation_movie_detail"
         android:name="com.example.movieapp.ui.detail.MovieDetailFragment"
-        android:label="Movie Detail Fragment"
+        android:label="Movie Detail"
         tools:layout="@layout/fragment_movie_detail">
         <argument
             android:name="movie_id"

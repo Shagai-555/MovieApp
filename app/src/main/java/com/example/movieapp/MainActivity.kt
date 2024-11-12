@@ -23,6 +23,18 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         setupActionBarWithNavController(navController)
+
+        supportActionBar?.hide()
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.navigation_movie_detail -> {
+                    supportActionBar?.show()
+                } else -> {
+                    supportActionBar?.hide()
+                }
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

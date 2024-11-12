@@ -10,7 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movieapp.R
 import com.example.movieapp.api.RetrofitInstance
 import com.example.movieapp.data.Movie
@@ -30,26 +30,31 @@ class SearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.searchRecyclerView.layoutManager = GridLayoutManager(context, 3)
 
         binding.searchEditText.addTextChangedListener { text ->
             if (!TextUtils.isEmpty(text)) {
                 searchMovies(text.toString())
             }
         }
-
         return root
     }
 
     private fun searchMovies(query: String) {
+        binding.loadingIndicator.visibility = View.VISIBLE
+        binding.searchRecyclerView.visibility = View.GONE
+
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = RetrofitInstance.api.searchMovies(query)
                 withContext(Dispatchers.Main) {
+                    binding.loadingIndicator.visibility = View.GONE
+                    binding.searchRecyclerView.visibility = View.VISIBLE
+
                     if (response.isSuccessful) {
                         val movies = response.body()?.results ?: emptyList()
                         movieAdapter = MovieAdapter(movies) { movie -> onMovieClicked(movie) }
@@ -60,6 +65,8 @@ class SearchFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    binding.loadingIndicator.visibility = View.GONE
+                    binding.searchRecyclerView.visibility = View.VISIBLE
                     Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
