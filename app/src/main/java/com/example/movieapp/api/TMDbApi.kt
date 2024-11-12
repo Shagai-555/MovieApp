@@ -3,8 +3,11 @@ package com.example.movieapp.api
 import com.example.movieapp.data.Credits
 import com.example.movieapp.data.MovieDetails
 import com.example.movieapp.data.MovieResponse
+import com.example.movieapp.data.WatchlistRequest
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -31,6 +34,17 @@ interface TMDbApi {
     suspend fun getMoviesByCategory(
         @Path("category") category: String,
         @Query("page") page: Int = 1
+    ): Response<MovieResponse>
+
+    @POST("account/{account_id}/watchlist")
+    suspend fun addMovieToWatchlist(
+        @Path("account_id") accountId: Int = 21592939,
+        @Body movie: WatchlistRequest
+    ): Response<MovieResponse>
+
+    @GET("account/{account_id}/watchlist/movies")
+    suspend fun getWatchList(
+        @Path("account_id") accountId: Int = 21592939
     ): Response<MovieResponse>
 
     @GET("movie/upcoming")

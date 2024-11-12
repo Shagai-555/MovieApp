@@ -29,7 +29,11 @@
         android:id="@+id/navigation_watchList"
         android:name="com.example.movieapp.ui.watchlist.WatchListFragment"
         android:label="@string/title_watchList"
-        tools:layout="@layout/fragment_watchlist" />
+        tools:layout="@layout/fragment_watchlist">
+        <action
+            android:id="@+id/action_watchList_to_movieDetailFragment"
+            app:destination="@id/navigation_movie_detail" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_movie_detail"

@@ -5,13 +5,15 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.movieapp.CastAdapter
+import com.example.movieapp.R
 import com.example.movieapp.api.RetrofitInstance
+import com.example.movieapp.data.WatchlistRequest
 import com.example.movieapp.databinding.FragmentMovieDetailBinding
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +26,7 @@ class MovieDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var movieId: Int = 0
+    private lateinit var watchlistButton: ImageButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +34,17 @@ class MovieDetailFragment : Fragment() {
     ): View {
         _binding = FragmentMovieDetailBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        watchlistButton = binding.root.findViewById(R.id.watchlistButton)
+
+        watchlistButton.setOnClickListener {
+            addToWatchlist()
+        }
+
+        val backButton: ImageButton = binding.root.findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
 
         arguments?.let {
             movieId = it.getInt("movie_id", 0)
@@ -51,6 +65,8 @@ class MovieDetailFragment : Fragment() {
     private fun loadMovieDetails() {
         lifecycleScope.launch {
             try {
+
+                binding.loadingIndicator.visibility = View.VISIBLE
                 val response = RetrofitInstance.api.getMovieDetails(movieId)
                 val creditRes = RetrofitInstance.api.getCredit(movieId)
 
@@ -79,7 +95,7 @@ class MovieDetailFragment : Fragment() {
                             )
 
                             binding.movieRuntime.text = Html.fromHtml(
-                                "Runtime: <b><i>${movieDetails.runtime}</i></b>",
+                                "Runtime: <b><i>${movieDetails.runtime} minutes</i></b>",
                                 Html.FROM_HTML_MODE_LEGACY
                             )
 
@@ -87,7 +103,7 @@ class MovieDetailFragment : Fragment() {
                             binding.movieProductionCompanies.text = productionCompanies
 
                             binding.movieRevenue.text = Html.fromHtml(
-                                "Revenue: <b><i>${movieDetails.revenue}</i></b>",
+                                "Revenue: <b><i>$${movieDetails.revenue}</i></b>",
                                 Html.FROM_HTML_MODE_LEGACY
                             )
 
@@ -104,14 +120,33 @@ class MovieDetailFragment : Fragment() {
                             Toast.makeText(context, "Movie details not available", Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        Toast.makeText(context, "Error fetching movie details", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Failed to load movie details", Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    binding.loadingIndicator.visibility = View.GONE
-                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                binding.loadingIndicator.visibility = View.GONE
+                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun addToWatchlist() {
+        lifecycleScope.launch {
+            try {
+                binding.loadingIndicator.visibility = View.VISIBLE
+                val response = RetrofitInstance.api.addMovieToWatchlist(
+                    movie = WatchlistRequest(media_id = movieId)
+                )
+                binding.loadingIndicator.visibility = View.GONE
+
+                if (response.isSuccessful) {
+                    watchlistButton.setImageResource(R.drawable.ic_watchlist_filled)
+                    Toast.makeText(context, "Added to Watchlist!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed to add to Watchlist", Toast.LENGTH_SHORT).show()
                 }
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -121,3 +156,4 @@ class MovieDetailFragment : Fragment() {
         _binding = null
     }
 }
+
